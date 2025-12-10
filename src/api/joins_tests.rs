@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #[cfg(test)]
+#[allow(clippy::unwrap_used)]
 mod api_query_joins_tests {
     use crate::api::handlers::*;
     use crate::persistence::ConfigPersistence;

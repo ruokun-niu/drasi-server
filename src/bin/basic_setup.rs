@@ -21,6 +21,7 @@
 use drasi_lib::Query;
 
 #[tokio::main]
+#[allow(clippy::print_stdout)]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("Creating example Drasi configuration...");
     println!();

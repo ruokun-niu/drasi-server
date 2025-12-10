@@ -125,17 +125,14 @@ impl From<DrasiError> for ErrorResponse {
                     _ => error_codes::INTERNAL_ERROR,
                 };
 
-                ErrorResponse::new(
-                    code,
-                    format!("{} '{}' not found", component_type, component_id),
-                )
+                ErrorResponse::new(code, format!("{component_type} '{component_id}' not found"))
             }
             AlreadyExists {
                 component_type,
                 component_id,
             } => ErrorResponse::new(
                 error_codes::DUPLICATE_RESOURCE,
-                format!("{} '{}' already exists", component_type, component_id),
+                format!("{component_type} '{component_id}' already exists"),
             ),
             InvalidConfig { message } => {
                 ErrorResponse::new(error_codes::INVALID_REQUEST, message.clone())
@@ -153,10 +150,7 @@ impl From<DrasiError> for ErrorResponse {
                 reason,
             } => ErrorResponse::new(
                 error_codes::INTERNAL_ERROR,
-                format!(
-                    "Failed to {} {} '{}': {}",
-                    operation, component_type, component_id, reason
-                ),
+                format!("Failed to {operation} {component_type} '{component_id}': {reason}"),
             ),
             Internal(ref err) => ErrorResponse::new(error_codes::INTERNAL_ERROR, err.to_string()),
         }

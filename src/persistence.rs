@@ -63,9 +63,10 @@ impl ConfigPersistence {
         );
 
         // Get current configuration from Core using public API
-        let core_config = self.core.get_current_config().await.map_err(|e| {
-            anyhow::anyhow!("Failed to get current config from DrasiLib: {}", e)
-        })?;
+        let core_config =
+            self.core.get_current_config().await.map_err(|e| {
+                anyhow::anyhow!("Failed to get current config from DrasiLib: {}", e)
+            })?;
 
         // Wrap Core config with wrapper settings
         // Note: sources and reactions are empty here because they are owned by the core
@@ -138,12 +139,12 @@ impl ConfigPersistence {
 mod tests {
     use super::*;
     use async_trait::async_trait;
-    use tempfile::TempDir;
     use drasi_lib::channels::dispatcher::ChangeDispatcher;
     use drasi_lib::channels::{ComponentEventSender, ComponentStatus, SubscriptionResponse};
     use drasi_lib::plugin_core::Source as SourceTrait;
     use std::collections::HashMap;
     use std::sync::Arc;
+    use tempfile::TempDir;
     use tokio::sync::RwLock;
 
     // Mock source for testing

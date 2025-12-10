@@ -68,11 +68,13 @@ impl DrasiServer {
         }
 
         // Build DrasiLib using the builder pattern with factory-created components
-        let mut builder = DrasiLib::builder()
-            .with_id(&config.core_config.id);
+        let mut builder = DrasiLib::builder().with_id(&config.core_config.id);
 
         // Create and add sources from config
-        info!("Loading {} source(s) from configuration", config.sources.len());
+        info!(
+            "Loading {} source(s) from configuration",
+            config.sources.len()
+        );
         for source_config in config.sources.clone() {
             let source = create_source(source_config).await?;
             builder = builder.with_source(source);

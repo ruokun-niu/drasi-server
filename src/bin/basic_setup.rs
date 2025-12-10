@@ -56,7 +56,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Note: Sources and reactions can be defined in the config file using the tagged enum format
     let config = drasi_server::DrasiServerConfig {
         server: drasi_server::ServerSettings::default(),
-        sources: vec![], // Add sources using SourceConfig enum
+        sources: vec![],   // Add sources using SourceConfig enum
         reactions: vec![], // Add reactions using ReactionConfig enum
         core_config: drasi_lib::config::DrasiLibConfig {
             id: uuid::Uuid::new_v4().to_string(),

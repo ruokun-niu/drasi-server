@@ -59,15 +59,15 @@ use drasi_reaction_sse::SseReactionConfig;
 ///     port: 9000
 /// ```
 #[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(tag = "kind")]
+#[serde(tag = "kind", rename_all = "camelCase")]
 pub enum SourceConfig {
     /// Mock source for testing
     #[serde(rename = "mock")]
     Mock {
         id: String,
-        #[serde(default = "default_true", rename = "autoStart")]
+        #[serde(default = "default_true")]
         auto_start: bool,
-        #[serde(skip_serializing_if = "Option::is_none", rename = "bootstrapProvider")]
+        #[serde(skip_serializing_if = "Option::is_none")]
         bootstrap_provider: Option<BootstrapProviderConfig>,
         #[serde(flatten)]
         config: MockSourceConfig,
@@ -76,9 +76,9 @@ pub enum SourceConfig {
     #[serde(rename = "http")]
     Http {
         id: String,
-        #[serde(default = "default_true", rename = "autoStart")]
+        #[serde(default = "default_true")]
         auto_start: bool,
-        #[serde(skip_serializing_if = "Option::is_none", rename = "bootstrapProvider")]
+        #[serde(skip_serializing_if = "Option::is_none")]
         bootstrap_provider: Option<BootstrapProviderConfig>,
         #[serde(flatten)]
         config: HttpSourceConfig,
@@ -87,9 +87,9 @@ pub enum SourceConfig {
     #[serde(rename = "grpc")]
     Grpc {
         id: String,
-        #[serde(default = "default_true", rename = "autoStart")]
+        #[serde(default = "default_true")]
         auto_start: bool,
-        #[serde(skip_serializing_if = "Option::is_none", rename = "bootstrapProvider")]
+        #[serde(skip_serializing_if = "Option::is_none")]
         bootstrap_provider: Option<BootstrapProviderConfig>,
         #[serde(flatten)]
         config: GrpcSourceConfig,
@@ -98,9 +98,9 @@ pub enum SourceConfig {
     #[serde(rename = "postgres")]
     Postgres {
         id: String,
-        #[serde(default = "default_true", rename = "autoStart")]
+        #[serde(default = "default_true")]
         auto_start: bool,
-        #[serde(skip_serializing_if = "Option::is_none", rename = "bootstrapProvider")]
+        #[serde(skip_serializing_if = "Option::is_none")]
         bootstrap_provider: Option<BootstrapProviderConfig>,
         #[serde(flatten)]
         config: PostgresSourceConfig,
@@ -109,9 +109,9 @@ pub enum SourceConfig {
     #[serde(rename = "platform")]
     Platform {
         id: String,
-        #[serde(default = "default_true", rename = "autoStart")]
+        #[serde(default = "default_true")]
         auto_start: bool,
-        #[serde(skip_serializing_if = "Option::is_none", rename = "bootstrapProvider")]
+        #[serde(skip_serializing_if = "Option::is_none")]
         bootstrap_provider: Option<BootstrapProviderConfig>,
         #[serde(flatten)]
         config: PlatformSourceConfig,
@@ -184,14 +184,14 @@ impl SourceConfig {
 ///     base_url: "http://localhost:3000"
 /// ```
 #[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(tag = "kind")]
+#[serde(tag = "kind", rename_all = "camelCase")]
 pub enum ReactionConfig {
     /// Log reaction for console output
     #[serde(rename = "log")]
     Log {
         id: String,
         queries: Vec<String>,
-        #[serde(default = "default_true", rename = "autoStart")]
+        #[serde(default = "default_true")]
         auto_start: bool,
         #[serde(flatten)]
         config: LogReactionConfig,
@@ -201,7 +201,7 @@ pub enum ReactionConfig {
     Http {
         id: String,
         queries: Vec<String>,
-        #[serde(default = "default_true", rename = "autoStart")]
+        #[serde(default = "default_true")]
         auto_start: bool,
         #[serde(flatten)]
         config: HttpReactionConfig,
@@ -211,7 +211,7 @@ pub enum ReactionConfig {
     HttpAdaptive {
         id: String,
         queries: Vec<String>,
-        #[serde(default = "default_true", rename = "autoStart")]
+        #[serde(default = "default_true")]
         auto_start: bool,
         #[serde(flatten)]
         config: HttpAdaptiveReactionConfig,
@@ -221,7 +221,7 @@ pub enum ReactionConfig {
     Grpc {
         id: String,
         queries: Vec<String>,
-        #[serde(default = "default_true", rename = "autoStart")]
+        #[serde(default = "default_true")]
         auto_start: bool,
         #[serde(flatten)]
         config: GrpcReactionConfig,
@@ -231,7 +231,7 @@ pub enum ReactionConfig {
     GrpcAdaptive {
         id: String,
         queries: Vec<String>,
-        #[serde(default = "default_true", rename = "autoStart")]
+        #[serde(default = "default_true")]
         auto_start: bool,
         #[serde(flatten)]
         config: GrpcAdaptiveReactionConfig,
@@ -241,7 +241,7 @@ pub enum ReactionConfig {
     Sse {
         id: String,
         queries: Vec<String>,
-        #[serde(default = "default_true", rename = "autoStart")]
+        #[serde(default = "default_true")]
         auto_start: bool,
         #[serde(flatten)]
         config: SseReactionConfig,
@@ -251,7 +251,7 @@ pub enum ReactionConfig {
     Platform {
         id: String,
         queries: Vec<String>,
-        #[serde(default = "default_true", rename = "autoStart")]
+        #[serde(default = "default_true")]
         auto_start: bool,
         #[serde(flatten)]
         config: PlatformReactionConfig,
@@ -261,7 +261,7 @@ pub enum ReactionConfig {
     Profiler {
         id: String,
         queries: Vec<String>,
-        #[serde(default = "default_true", rename = "autoStart")]
+        #[serde(default = "default_true")]
         auto_start: bool,
         #[serde(flatten)]
         config: ProfilerReactionConfig,
@@ -335,14 +335,15 @@ pub struct DrasiServerConfig {
 /// Server settings for DrasiServer
 /// These control DrasiServer's operational behavior including network binding
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct ServerSettings {
     #[serde(default = "default_host")]
     pub host: String,
     #[serde(default = "default_port")]
     pub port: u16,
-    #[serde(default = "default_log_level", rename = "logLevel")]
+    #[serde(default = "default_log_level")]
     pub log_level: String,
-    #[serde(default = "default_disable_persistence", rename = "disablePersistence")]
+    #[serde(default = "default_disable_persistence")]
     pub disable_persistence: bool,
 }
 

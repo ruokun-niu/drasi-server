@@ -58,15 +58,16 @@ pub struct ErrorResponse {
 
 /// Additional error details
 #[derive(Debug, Serialize, ToSchema)]
+#[serde(rename_all = "camelCase")]
 pub struct ErrorDetail {
     /// Component type if applicable
-    #[serde(skip_serializing_if = "Option::is_none", rename = "componentType")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub component_type: Option<String>,
     /// Component ID if applicable
-    #[serde(skip_serializing_if = "Option::is_none", rename = "componentId")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub component_id: Option<String>,
     /// Technical error details
-    #[serde(skip_serializing_if = "Option::is_none", rename = "technicalDetails")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub technical_details: Option<String>,
 }
 

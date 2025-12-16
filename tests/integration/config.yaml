@@ -35,7 +35,8 @@ queries:
   - id: hello-world-from
     auto_start: true
     query: |
-      MATCH (m:message {message: 'Hello World'})
+      MATCH (m:message)
+      WHERE m.message = 'Hello World'
       RETURN m.messageid AS MessageId, m.from AS MessageFrom
     sources:
       - source_id: postgres-messages

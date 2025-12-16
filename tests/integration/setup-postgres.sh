@@ -30,20 +30,38 @@ ALTER SYSTEM SET wal_level = logical;
 SELECT pg_reload_conf();
 EOF
 
-# Check if we need to restart (only in CI with service containers)
-if [ "$CI" = "true" ] && [ -n "$RESTART_CONTAINER" ]; then
-  echo "Restarting PostgreSQL container to apply wal_level change..."
-  docker restart $(docker ps -q --filter ancestor=postgres:15)
-  sleep 5
+# Always restart to apply wal_level change (it requires restart)
+echo "Restarting PostgreSQL to apply wal_level change..."
 
-  # Wait for PostgreSQL to be ready again
-  echo "Waiting for PostgreSQL to restart..."
-  until PGPASSWORD=$DB_PASSWORD pg_isready -h $DB_HOST -p $DB_PORT -U $DB_USER; do
-    echo "  PostgreSQL not ready, retrying..."
-    sleep 2
-  done
-  echo "PostgreSQL restarted successfully!"
+if [ "$CI" = "true" ] && [ -n "$RESTART_CONTAINER" ]; then
+  # In CI with service containers
+  docker restart $(docker ps -q --filter ancestor=postgres:15)
+else
+  # Local development with Docker
+  CONTAINER_NAME="${POSTGRES_CONTAINER:-drasi-test-postgres}"
+  if docker ps --format '{{.Names}}' | grep -q "^${CONTAINER_NAME}$"; then
+    docker restart "$CONTAINER_NAME"
+  else
+    echo "Warning: Container '$CONTAINER_NAME' not found"
+    echo "Please restart PostgreSQL manually or set POSTGRES_CONTAINER env var"
+    echo "Example: docker restart your-postgres-container-name"
+    exit 1
+  fi
 fi
+
+sleep 5
+
+# Wait for PostgreSQL to be ready again
+echo "Waiting for PostgreSQL to restart..."
+until PGPASSWORD=$DB_PASSWORD pg_isready -h $DB_HOST -p $DB_PORT -U $DB_USER; do
+  echo "  PostgreSQL not ready, retrying..."
+  sleep 2
+done
+echo "PostgreSQL restarted successfully!"
+
+# Verify wal_level is set correctly
+echo "Verifying wal_level setting..."
+PGPASSWORD=$DB_PASSWORD psql -h $DB_HOST -U $DB_USER -d postgres -c "SHOW wal_level;"
 
 # Create the message table and insert test data
 echo "Creating test schema and data..."
@@ -66,6 +84,9 @@ INSERT INTO message (messageid, "from", message) VALUES
   (2, 'Brian Kernighan', 'Hello World'),
   (3, 'Antoninus', 'I am Spartacus'),
   (4, 'David', 'I am Spartacus');
+
+-- Fix the SERIAL sequence to start after the inserted IDs
+SELECT setval('message_messageid_seq', (SELECT MAX(messageid) FROM message));
 
 -- Set up replication publication
 CREATE PUBLICATION drasi_getting_started_pub FOR TABLE message;

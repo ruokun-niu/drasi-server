@@ -19,6 +19,7 @@ help:
 	@echo "  fmt           - Check code formatting"
 	@echo "  help          - Show this help message"
 
+# Note: Warnings are configured via RUSTFLAGS above, not via inline clippy flags.
 clippy:
 	RUSTFLAGS="$(RUSTFLAGS)" cargo clippy --all-targets --all-features
 

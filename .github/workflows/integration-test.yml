@@ -117,7 +117,7 @@ jobs:
             id: integration-test-server
 
           sources:
-            - kind: postgres
+            - source_type: postgres
               id: postgres-messages
               auto_start: true
               host: localhost
@@ -155,7 +155,7 @@ jobs:
                 - source_id: postgres-messages
 
           reactions:
-            - kind: log
+            - reaction_type: log
               id: log-all-queries
               auto_start: true
               queries:
@@ -168,18 +168,36 @@ jobs:
 
       - name: Start Drasi Server in background
         run: |
-          ./target/release/drasi-server --config test-config.yaml &
+          # Start server with output redirected to files for debugging
+          ./target/release/drasi-server --config test-config.yaml > server.log 2>&1 &
           SERVER_PID=$!
           echo "SERVER_PID=$SERVER_PID" >> $GITHUB_ENV
+          echo "Started server with PID: $SERVER_PID"
 
           # Wait for server to start
           echo "Waiting for server to start..."
           for i in {1..30}; do
-            if curl -s http://localhost:8080/health > /dev/null; then
+            # Check if process is still running
+            if ! kill -0 $SERVER_PID 2>/dev/null; then
+              echo "ERROR: Server process died!"
+              echo "=== Server log ==="
+              cat server.log
+              exit 1
+            fi
+
+            # Check if server is responding
+            if curl -s http://localhost:8080/health > /dev/null 2>&1; then
               echo "Server is ready!"
               break
             fi
+
             echo "Attempt $i: Server not ready yet..."
+            if [ $i -eq 30 ]; then
+              echo "ERROR: Server did not start in time"
+              echo "=== Server log ==="
+              cat server.log
+              exit 1
+            fi
             sleep 2
           done
 
@@ -249,6 +267,16 @@ jobs:
           if ! echo "$response" | grep -q "Alice"; then
             echo "New message not detected in query results"
             exit 1
+          fi
+
+      - name: Show server logs on failure
+        if: failure()
+        run: |
+          echo "=== Server logs ==="
+          if [ -f server.log ]; then
+            cat server.log
+          else
+            echo "No server log file found"
           fi
 
       - name: Cleanup

@@ -37,7 +37,7 @@ jobs:
           components: rustfmt
 
       - name: Check formatting
-        run: make fmt
+        run: make fmt-check
 
   clippy:
     name: Clippy

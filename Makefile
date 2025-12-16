@@ -9,7 +9,7 @@ RUSTFLAGS := -Dwarnings \
 	-A clippy::ptr_arg \
 	-A clippy::type_complexity
 
-.PHONY: clippy test fmt help
+.PHONY: clippy test fmt fmt-check help
 
 # Default target
 help:
@@ -29,3 +29,6 @@ fmt:
 
 fmt-check:
 	cargo fmt -- --check
+
+test:
+	cargo test --all-features

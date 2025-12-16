@@ -75,6 +75,7 @@ The integration test suite includes:
 4. **Query status test (filter)** - Verifies filter query is running
 5. **Query status test (aggregation)** - Verifies aggregation query is running
 6. **Change detection test** - Verifies CDC is working by inserting new data
+
 ## CI Usage
 
 The GitHub Actions workflow uses these scripts:
@@ -89,7 +90,7 @@ The GitHub Actions workflow uses these scripts:
   run: cargo build --release
 
 - name: Run integration tests
-  run: ./tests/integration/run-integration-test.sh
+  run: ./tests/integration/getting-started/run-integration-test.sh
 ```
 
 ## Cleanup

@@ -16,15 +16,11 @@ help:
 	@echo "Available targets:"
 	@echo "  clippy        - Run cargo clippy with same configuration as CI"
 	@echo "  test          - Run cargo test with all features"
-	@echo "  fmt           - Check code formatting"
-	@echo "  help          - Show this help message"
-
-# Note: Warnings are configured via RUSTFLAGS above, not via inline clippy flags.
-	@echo "  clippy        - Run cargo clippy with same configuration as CI"
 	@echo "  fmt           - Format code using cargo fmt"
 	@echo "  fmt-check     - Check code formatting (CI, does not modify files)"
 	@echo "  help          - Show this help message"
 
+# Note: Warnings are configured via RUSTFLAGS above, not via inline clippy flags.
 clippy:
 	RUSTFLAGS="$(RUSTFLAGS)" cargo clippy --all-targets --all-features
 

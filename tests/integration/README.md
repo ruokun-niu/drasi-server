@@ -72,10 +72,9 @@ The integration test suite includes:
 1. **Health endpoint test** - Verifies server is responding
 2. **Sources endpoint test** - Checks PostgreSQL source is registered
 3. **Queries endpoint test** - Verifies queries are created
-4. **Query results test (filter)** - Tests simple filtering query
-5. **Query results test (aggregation)** - Tests aggregation query
+4. **Query status test (filter)** - Verifies filter query is running
+5. **Query status test (aggregation)** - Verifies aggregation query is running
 6. **Change detection test** - Verifies CDC is working by inserting new data
-
 ## CI Usage
 
 The GitHub Actions workflow uses these scripts:

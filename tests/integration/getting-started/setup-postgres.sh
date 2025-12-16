@@ -44,7 +44,7 @@ else
   else
     echo "Warning: Container '$CONTAINER_NAME' not found"
     echo "Please restart PostgreSQL manually or set POSTGRES_CONTAINER env var"
-    echo "Example: docker restart your-postgres-container-name"
+    echo "Example: docker restart $CONTAINER_NAME"
     exit 1
   fi
 fi

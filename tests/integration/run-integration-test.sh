@@ -42,7 +42,19 @@ log_warn() {
 cleanup() {
   if [ -n "$SERVER_PID" ]; then
     log_info "Stopping server (PID: $SERVER_PID)..."
-    kill $SERVER_PID 2>/dev/null || true
+
+    # Check if process is still running before trying to kill it
+    if kill -0 $SERVER_PID 2>/dev/null; then
+      kill $SERVER_PID 2>/dev/null || true
+      # Wait briefly for graceful shutdown
+      sleep 2
+      # Force kill if still running
+      if kill -0 $SERVER_PID 2>/dev/null; then
+        kill -9 $SERVER_PID 2>/dev/null || true
+      fi
+    fi
+
+    # Wait for process to fully exit (don't fail if it's already gone)
     wait $SERVER_PID 2>/dev/null || true
   fi
 }
@@ -181,13 +193,15 @@ main() {
   # Start the server
   start_server
 
-  # Run tests
+  # Run tests (don't exit on failure due to set -e, we want to run all tests)
+  set +e
   run_test "Health endpoint" "test_health_endpoint"
   run_test "Sources endpoint" "test_sources_endpoint"
   run_test "Queries endpoint" "test_queries_endpoint"
   run_test "Query results (filter)" "test_query_results"
   run_test "Query results (aggregation)" "test_aggregation_results"
   run_test "Change detection" "test_change_detection"
+  set -e
 
   # Print summary
   echo ""
@@ -195,15 +209,24 @@ main() {
   log_info "Tests passed: $TESTS_PASSED"
   log_info "Tests failed: $TESTS_FAILED"
 
+  # Determine exit code
+  local exit_code=0
   if [ $TESTS_FAILED -eq 0 ]; then
     log_info "All tests passed! ✓"
-    exit 0
   else
     log_error "Some tests failed! ✗"
     log_error "=== Server log ==="
     cat "$SERVER_LOG"
-    exit 1
+    exit_code=1
   fi
+
+  # Return exit code (cleanup will happen via trap)
+  return $exit_code
 }
 
+# Run main and capture exit code
 main "$@"
+exit_code=$?
+
+# Exit with proper code
+exit $exit_code

@@ -18,7 +18,9 @@ use log::{debug, info, warn};
 use std::fs;
 use std::path::PathBuf;
 
-use drasi_server::{DrasiServer, DrasiServerConfig};
+use drasi_server::api::mappings::{map_server_settings, DtoMapper};
+use drasi_server::api::models::ConfigValue;
+use drasi_server::{load_config_file, save_config_file, DrasiServer, DrasiServerConfig};
 
 #[derive(Parser)]
 #[command(name = "drasi-server")]
@@ -34,6 +36,25 @@ struct Cli {
 #[tokio::main]
 async fn main() -> Result<()> {
     let cli = Cli::parse();
+
+    // Load .env file if it exists (for environment variable interpolation)
+    // Look for .env in the same directory as the config file
+    let env_file_loaded = if let Some(config_dir) = cli.config.parent() {
+        let env_file = config_dir.join(".env");
+        if env_file.exists() {
+            match dotenvy::from_path(&env_file) {
+                Ok(_) => true,
+                Err(e) => {
+                    eprintln!("Warning: Failed to load .env file: {}", e);
+                    false
+                }
+            }
+        } else {
+            false
+        }
+    } else {
+        false
+    };
 
     // Check if config file exists, create default if it doesn't
     let config = if !cli.config.exists() {
@@ -61,11 +82,11 @@ async fn main() -> Result<()> {
 
         // Use CLI port if provided
         if let Some(port) = cli.port {
-            default_config.server.port = port;
+            default_config.server.port = ConfigValue::Static(port);
             info!("Using command line port {port} in default configuration");
         }
 
-        default_config.save_to_file(&cli.config)?;
+        save_config_file(&default_config, &cli.config)?;
 
         info!("Default configuration created at: {}", cli.config.display());
         info!("Please edit the configuration file to add sources, queries, and reactions.");
@@ -73,14 +94,18 @@ async fn main() -> Result<()> {
         default_config
     } else {
         // Load config first to get log level
-        DrasiServerConfig::load_from_file(&cli.config)?
+        load_config_file(&cli.config)?
     };
+
+    // Resolve server settings for use in main
+    let mapper = DtoMapper::new();
+    let resolved_settings = map_server_settings(&config.server, &mapper)?;
 
     // Set log level from config if RUST_LOG wasn't explicitly set by user
     if std::env::var("RUST_LOG").is_err() {
         // SAFETY: set_var is called early in main() before any other threads are spawned
         unsafe {
-            std::env::set_var("RUST_LOG", &config.server.log_level);
+            std::env::set_var("RUST_LOG", &resolved_settings.log_level);
         }
         // Initialize logger with correct level
         env_logger::init();
@@ -91,11 +116,16 @@ async fn main() -> Result<()> {
 
     info!("Starting Drasi Server");
     debug!("Debug logging is enabled");
+
+    if env_file_loaded {
+        info!("Loaded environment variables from .env file");
+    }
+
     info!("Config file: {}", cli.config.display());
 
-    let final_port = cli.port.unwrap_or(config.server.port);
+    let final_port = cli.port.unwrap_or(resolved_settings.port);
     info!("Port: {final_port}");
-    debug!("Server configuration: {:?}", config.server);
+    debug!("Server configuration: {:?}", resolved_settings);
 
     let server = DrasiServer::new(cli.config, final_port).await?;
     server.run().await?;

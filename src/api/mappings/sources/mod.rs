@@ -12,24 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//! REST API implementation for Drasi Server.
-//!
-//! This module provides the HTTP API endpoints for managing sources, queries, and reactions.
-//! It also includes the data models (DTOs) and mappings used for API serialization/deserialization.
+//! Source configuration mappers.
 
-pub mod error;
-pub mod handlers;
-pub mod mappings;
-pub mod models;
-pub mod openapi;
+mod grpc_mapper;
+mod http_mapper;
+mod mock_mapper;
+mod platform_mapper;
+mod postgres_mapper;
 
-#[cfg(test)]
-mod tests;
-
-#[cfg(test)]
-mod joins_tests;
-
-pub use error::*;
-pub use handlers::*;
-pub use models::*;
-pub use openapi::ApiDoc;
+pub use grpc_mapper::GrpcSourceConfigMapper;
+pub use http_mapper::HttpSourceConfigMapper;
+pub use mock_mapper::MockSourceConfigMapper;
+pub use platform_mapper::PlatformSourceConfigMapper;
+pub use postgres_mapper::PostgresConfigMapper;

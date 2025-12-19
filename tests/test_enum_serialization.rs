@@ -161,7 +161,6 @@ fn test_reaction_config_log_serializes_camelcase() {
     // Verify basic fields exist
     assert!(json.get("id").is_some(), "id should exist");
     assert!(json.get("queries").is_some(), "queries should exist");
-    // Note: auto_start field stays as auto_start (not renamed by enum-level rename_all)
 
     println!("✅ ReactionConfig::Log serializes correctly");
 }

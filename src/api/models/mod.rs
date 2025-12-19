@@ -12,31 +12,74 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use anyhow::Result;
-use drasi_lib::bootstrap::BootstrapProviderConfig;
-use drasi_lib::config::DrasiLibConfig;
+//! API models module - DTO types for configuration.
+//!
+//! This module contains all Data Transfer Object (DTO) types used in the API.
+//! DTOs are organized by the external library they mirror, making it easy to
+//! locate and maintain the corresponding types.
+//!
+//! # Organization
+//!
+//! - **Sources**: DTOs for data source configurations
+//!   - `postgres` - PostgreSQL source
+//!   - `http_source` - HTTP source
+//!   - `grpc_source` - gRPC source
+//!   - `mock` - Mock source for testing
+//!   - `platform_source` - Platform/Redis source
+//!
+//! - **Reactions**: DTOs for reaction configurations
+//!   - `http_reaction` - HTTP and HTTP Adaptive reactions
+//!   - `grpc_reaction` - gRPC and gRPC Adaptive reactions
+//!   - `sse` - Server-Sent Events reaction
+//!   - `log` - Log reaction
+//!   - `platform_reaction` - Platform reaction
+//!   - `profiler` - Profiler reaction
+
 use serde::{Deserialize, Serialize};
-use std::fs;
-use std::net::IpAddr;
-use std::path::Path;
-use std::str::FromStr;
 
-// Source plugin configs
-use drasi_source_grpc::GrpcSourceConfig;
-use drasi_source_http::HttpSourceConfig;
-use drasi_source_mock::MockSourceConfig;
-use drasi_source_platform::PlatformSourceConfig;
-use drasi_source_postgres::PostgresSourceConfig;
+// Config value module
+pub mod config_value;
 
-// Reaction plugin configs
-use drasi_reaction_grpc::GrpcReactionConfig;
-use drasi_reaction_grpc_adaptive::GrpcAdaptiveReactionConfig;
-use drasi_reaction_http::HttpReactionConfig;
-use drasi_reaction_http_adaptive::HttpAdaptiveReactionConfig;
-use drasi_reaction_log::LogReactionConfig;
-use drasi_reaction_platform::PlatformReactionConfig;
-use drasi_reaction_profiler::ProfilerReactionConfig;
-use drasi_reaction_sse::SseReactionConfig;
+// Source modules
+pub mod grpc_source;
+pub mod http_source;
+pub mod mock;
+pub mod platform_source;
+pub mod postgres;
+
+// Reaction modules
+pub mod grpc_reaction;
+pub mod http_reaction;
+pub mod log;
+pub mod platform_reaction;
+pub mod profiler;
+pub mod sse;
+
+// Re-export all DTO types for convenient access
+pub use grpc_source::*;
+pub use http_source::*;
+pub use mock::*;
+pub use platform_source::*;
+pub use postgres::*;
+
+pub use grpc_reaction::*;
+pub use http_reaction::*;
+pub use log::*;
+pub use platform_reaction::*;
+pub use profiler::*;
+pub use sse::*;
+
+// Config value types
+pub use config_value::*;
+
+// =============================================================================
+// Configuration Enums (Top-level aggregates)
+// =============================================================================
+
+/// Helper function for serde defaults
+fn default_true() -> bool {
+    true
+}
 
 /// Source configuration with kind discriminator.
 ///
@@ -68,9 +111,9 @@ pub enum SourceConfig {
         #[serde(default = "default_true")]
         auto_start: bool,
         #[serde(skip_serializing_if = "Option::is_none")]
-        bootstrap_provider: Option<BootstrapProviderConfig>,
+        bootstrap_provider: Option<drasi_lib::bootstrap::BootstrapProviderConfig>,
         #[serde(flatten)]
-        config: MockSourceConfig,
+        config: MockSourceConfigDto,
     },
     /// HTTP source for receiving events via HTTP endpoints
     #[serde(rename = "http")]
@@ -79,9 +122,9 @@ pub enum SourceConfig {
         #[serde(default = "default_true")]
         auto_start: bool,
         #[serde(skip_serializing_if = "Option::is_none")]
-        bootstrap_provider: Option<BootstrapProviderConfig>,
+        bootstrap_provider: Option<drasi_lib::bootstrap::BootstrapProviderConfig>,
         #[serde(flatten)]
-        config: HttpSourceConfig,
+        config: HttpSourceConfigDto,
     },
     /// gRPC source for receiving events via gRPC streaming
     #[serde(rename = "grpc")]
@@ -90,9 +133,9 @@ pub enum SourceConfig {
         #[serde(default = "default_true")]
         auto_start: bool,
         #[serde(skip_serializing_if = "Option::is_none")]
-        bootstrap_provider: Option<BootstrapProviderConfig>,
+        bootstrap_provider: Option<drasi_lib::bootstrap::BootstrapProviderConfig>,
         #[serde(flatten)]
-        config: GrpcSourceConfig,
+        config: GrpcSourceConfigDto,
     },
     /// PostgreSQL replication source for CDC
     #[serde(rename = "postgres")]
@@ -101,9 +144,9 @@ pub enum SourceConfig {
         #[serde(default = "default_true")]
         auto_start: bool,
         #[serde(skip_serializing_if = "Option::is_none")]
-        bootstrap_provider: Option<BootstrapProviderConfig>,
+        bootstrap_provider: Option<drasi_lib::bootstrap::BootstrapProviderConfig>,
         #[serde(flatten)]
-        config: PostgresSourceConfig,
+        config: PostgresSourceConfigDto,
     },
     /// Platform source for Redis Streams consumption
     #[serde(rename = "platform")]
@@ -112,9 +155,9 @@ pub enum SourceConfig {
         #[serde(default = "default_true")]
         auto_start: bool,
         #[serde(skip_serializing_if = "Option::is_none")]
-        bootstrap_provider: Option<BootstrapProviderConfig>,
+        bootstrap_provider: Option<drasi_lib::bootstrap::BootstrapProviderConfig>,
         #[serde(flatten)]
-        config: PlatformSourceConfig,
+        config: PlatformSourceConfigDto,
     },
 }
 
@@ -142,7 +185,7 @@ impl SourceConfig {
     }
 
     /// Get the bootstrap provider configuration if any
-    pub fn bootstrap_provider(&self) -> Option<&BootstrapProviderConfig> {
+    pub fn bootstrap_provider(&self) -> Option<&drasi_lib::bootstrap::BootstrapProviderConfig> {
         match self {
             SourceConfig::Mock {
                 bootstrap_provider, ..
@@ -165,24 +208,8 @@ impl SourceConfig {
 
 /// Reaction configuration with kind discriminator.
 ///
-/// Uses serde tagged enum to automatically deserialize into the correct
-/// plugin-specific config struct based on the `kind` field.
-///
-/// # Example YAML
-///
-/// ```yaml
-/// reactions:
-///   - kind: log
-///     id: log-reaction
-///     queries: [my-query]
-///     auto_start: true
-///     log_level: info
-///
-///   - kind: http
-///     id: webhook
-///     queries: [my-query]
-///     base_url: "http://localhost:3000"
-/// ```
+/// Similar to SourceConfig, uses serde tagged enum for type-safe deserialization
+/// of different reaction types.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(tag = "kind", rename_all = "camelCase")]
 pub enum ReactionConfig {
@@ -194,7 +221,7 @@ pub enum ReactionConfig {
         #[serde(default = "default_true")]
         auto_start: bool,
         #[serde(flatten)]
-        config: LogReactionConfig,
+        config: LogReactionConfigDto,
     },
     /// HTTP reaction for webhooks
     #[serde(rename = "http")]
@@ -204,7 +231,7 @@ pub enum ReactionConfig {
         #[serde(default = "default_true")]
         auto_start: bool,
         #[serde(flatten)]
-        config: HttpReactionConfig,
+        config: HttpReactionConfigDto,
     },
     /// HTTP adaptive reaction with batching
     #[serde(rename = "http-adaptive")]
@@ -214,7 +241,7 @@ pub enum ReactionConfig {
         #[serde(default = "default_true")]
         auto_start: bool,
         #[serde(flatten)]
-        config: HttpAdaptiveReactionConfig,
+        config: HttpAdaptiveReactionConfigDto,
     },
     /// gRPC reaction for streaming results
     #[serde(rename = "grpc")]
@@ -224,7 +251,7 @@ pub enum ReactionConfig {
         #[serde(default = "default_true")]
         auto_start: bool,
         #[serde(flatten)]
-        config: GrpcReactionConfig,
+        config: GrpcReactionConfigDto,
     },
     /// gRPC adaptive reaction with batching
     #[serde(rename = "grpc-adaptive")]
@@ -234,7 +261,7 @@ pub enum ReactionConfig {
         #[serde(default = "default_true")]
         auto_start: bool,
         #[serde(flatten)]
-        config: GrpcAdaptiveReactionConfig,
+        config: GrpcAdaptiveReactionConfigDto,
     },
     /// SSE reaction for Server-Sent Events
     #[serde(rename = "sse")]
@@ -244,7 +271,7 @@ pub enum ReactionConfig {
         #[serde(default = "default_true")]
         auto_start: bool,
         #[serde(flatten)]
-        config: SseReactionConfig,
+        config: SseReactionConfigDto,
     },
     /// Platform reaction for Drasi platform integration
     #[serde(rename = "platform")]
@@ -254,7 +281,7 @@ pub enum ReactionConfig {
         #[serde(default = "default_true")]
         auto_start: bool,
         #[serde(flatten)]
-        config: PlatformReactionConfig,
+        config: PlatformReactionConfigDto,
     },
     /// Profiler reaction for performance analysis
     #[serde(rename = "profiler")]
@@ -264,7 +291,7 @@ pub enum ReactionConfig {
         #[serde(default = "default_true")]
         auto_start: bool,
         #[serde(flatten)]
-        config: ProfilerReactionConfig,
+        config: ProfilerReactionConfigDto,
     },
 }
 

@@ -33,21 +33,21 @@ sources:
 
 queries:
   - id: hello-world-from
-    autoStart: true
+    auto_start: true
     query: |
       MATCH (m:message)
       WHERE m.message = 'Hello World'
       RETURN m.messageid AS MessageId, m.from AS MessageFrom
     sources:
-      - sourceId: postgres-messages
+      - source_id: postgres-messages
 
   - id: message-count
-    autoStart: true
+    auto_start: true
     query: |
       MATCH (m:message)
       RETURN m.message AS Message, count(m) AS Frequency
     sources:
-      - sourceId: postgres-messages
+      - source_id: postgres-messages
 
 reactions:
   - kind: log

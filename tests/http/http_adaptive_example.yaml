@@ -24,8 +24,8 @@ queries:
       elementId(r) AS RoomId,
       r.temperature, r.humidity, r.co2
   sources:
-  - sourceId: events-http
-  autoStart: true
+  - source_id: events-http
+  auto_start: true
 reactions:
 - kind: http-adaptive
   id: webhook-adaptive

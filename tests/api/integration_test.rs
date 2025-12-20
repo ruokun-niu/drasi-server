@@ -365,7 +365,7 @@ async fn test_dynamic_source_creation_via_api() {
     let source_config = json!({
         "kind": "mock",
         "id": "dynamic-source",
-        "auto_start": false
+        "autoStart": false
     });
 
     let response = router
@@ -400,7 +400,7 @@ async fn test_dynamic_reaction_creation_via_api() {
         "kind": "log",
         "id": "dynamic-reaction",
         "queries": ["some-query"],
-        "auto_start": false
+        "autoStart": false
     });
 
     let response = router

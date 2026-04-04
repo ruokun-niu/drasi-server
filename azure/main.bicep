@@ -7,7 +7,48 @@
 targetScope = 'resourceGroup'
 
 param location string = resourceGroup().location
-param containerImage string = 'ghcr.io/drasi-project/drasi-server:latest'
+param containerImage string = 'ghcr.io/ruokun-niu/drasi-server:0.1.12'
+
+// ---------------------------------------------------------------------------
+// Drasi Server config — edit this inline
+// ---------------------------------------------------------------------------
+
+var serverConfig = '''
+id: 68a5d185-a329-4de7-934d-4693cca1d07a
+host: 0.0.0.0
+port: 8080
+logLevel: info
+persistConfig: false
+persistIndex: false
+sources:
+- kind: mock
+  id: mock-source
+  autoStart: true
+  dataType:
+    sensorCount: 5
+    type: sensorReading
+  intervalMs: 5000
+queries:
+- id: my-query
+  autoStart: true
+  query: MATCH (n) RETURN n
+  queryLanguage: GQL
+  sources:
+  - sourceId: mock-source
+  enableBootstrap: true
+  bootstrapBufferSize: 10000
+reactions:
+- kind: log
+  id: log-reaction
+  queries:
+  - my-query
+  autoStart: true
+  routes: {}
+'''
+
+// ---------------------------------------------------------------------------
+// Log Analytics
+// ---------------------------------------------------------------------------
 
 resource logAnalytics 'Microsoft.OperationalInsights/workspaces@2023-09-01' = {
   name: 'drasi-server-logs'
@@ -18,8 +59,12 @@ resource logAnalytics 'Microsoft.OperationalInsights/workspaces@2023-09-01' = {
   }
 }
 
+// ---------------------------------------------------------------------------
+// Container Apps Environment
+// ---------------------------------------------------------------------------
+
 resource env 'Microsoft.App/managedEnvironments@2024-03-01' = {
-  name: 'drasi-server-env'
+  name: 'drasi-server-test-env'
   location: location
   properties: {
     appLogsConfiguration: {
@@ -32,6 +77,10 @@ resource env 'Microsoft.App/managedEnvironments@2024-03-01' = {
   }
 }
 
+// ---------------------------------------------------------------------------
+// Container App
+// ---------------------------------------------------------------------------
+
 resource app 'Microsoft.App/containerApps@2024-03-01' = {
   name: 'drasi-server'
   location: location
@@ -43,11 +92,17 @@ resource app 'Microsoft.App/containerApps@2024-03-01' = {
         targetPort: 8080
         transport: 'http'
       }
+      secrets: [
+        {
+          name: 'server-config'
+          value: serverConfig
+        }
+      ]
     }
     template: {
       containers: [
         {
-          name: 'drasi-server'
+          name: 'drasi-server-test'
           image: containerImage
           resources: {
             cpu: json('0.5')
@@ -55,6 +110,13 @@ resource app 'Microsoft.App/containerApps@2024-03-01' = {
           }
           env: [
             { name: 'RUST_LOG', value: 'info' }
+          ]
+          args: ['--config', '/config/server.yaml']
+          volumeMounts: [
+            {
+              volumeName: 'config-volume'
+              mountPath: '/config'
+            }
           ]
           probes: [
             {
@@ -68,6 +130,18 @@ resource app 'Microsoft.App/containerApps@2024-03-01' = {
               httpGet: { path: '/health', port: 8080 }
               initialDelaySeconds: 10
               periodSeconds: 5
+            }
+          ]
+        }
+      ]
+      volumes: [
+        {
+          name: 'config-volume'
+          storageType: 'Secret'
+          secrets: [
+            {
+              secretRef: 'server-config'
+              path: 'server.yaml'
             }
           ]
         }

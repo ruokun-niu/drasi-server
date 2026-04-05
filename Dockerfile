@@ -79,8 +79,8 @@ WORKDIR /app
 # Copy binary from builder
 COPY --from=builder /app/target/release/drasi-server /usr/local/bin/drasi-server
 
-# Create config directory with proper permissions
-RUN mkdir -p /app/config && chown -R drasi:drasi /app
+# Create config and plugins directories with proper permissions
+RUN mkdir -p /app/config /usr/local/bin/plugins && chown -R drasi:drasi /app /usr/local/bin/plugins
 
 # Copy default config (will be overridden by volume mount)
 COPY --chown=drasi:drasi config/server-docker.yaml /app/config/server.yaml

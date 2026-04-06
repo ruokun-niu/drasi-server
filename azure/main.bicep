@@ -1,20 +1,22 @@
-// Drasi Server — Minimal Azure Container Apps deployment
+// Drasi Server — Azure Container Apps deployment
 //
 // Deploy:
 //   az group create --name drasi-rg --location eastus
-//   az deployment group create --resource-group drasi-rg --template-file azure/main.bicep
+//   az deployment group create --resource-group drasi-rg --template-file azure/main.bicep \
+//     --parameters azure/main.bicepparam
 
 targetScope = 'resourceGroup'
 
 param location string = resourceGroup().location
-param containerImage string = 'ghcr.io/ruokun-niu/drasi-server:0.1.12'
+param containerImage string = 'ghcr.io/drasi-project/drasi-server:latest'
+param appName string = 'drasi-server'
+param envName string = 'drasi-server-env'
 
 // ---------------------------------------------------------------------------
-// Drasi Server config — edit this inline
+// Drasi Server config — edit this inline or override via parameter
 // ---------------------------------------------------------------------------
 
-var serverConfig = '''
-id: 68a5d185-a329-4de7-934d-4693cca1d07a
+param serverConfig string = '''
 host: 0.0.0.0
 port: 8080
 logLevel: info
@@ -48,7 +50,6 @@ reactions:
   queries:
   - my-query
   autoStart: true
-  routes: {}
 '''
 
 // ---------------------------------------------------------------------------
@@ -56,7 +57,7 @@ reactions:
 // ---------------------------------------------------------------------------
 
 resource logAnalytics 'Microsoft.OperationalInsights/workspaces@2023-09-01' = {
-  name: 'drasi-server-logs'
+  name: '${appName}-logs'
   location: location
   properties: {
     sku: { name: 'PerGB2018' }
@@ -69,7 +70,7 @@ resource logAnalytics 'Microsoft.OperationalInsights/workspaces@2023-09-01' = {
 // ---------------------------------------------------------------------------
 
 resource env 'Microsoft.App/managedEnvironments@2024-03-01' = {
-  name: 'drasi-server-test-env'
+  name: envName
   location: location
   properties: {
     appLogsConfiguration: {
@@ -87,7 +88,7 @@ resource env 'Microsoft.App/managedEnvironments@2024-03-01' = {
 // ---------------------------------------------------------------------------
 
 resource app 'Microsoft.App/containerApps@2024-03-01' = {
-  name: 'drasi-server'
+  name: appName
   location: location
   properties: {
     environmentId: env.id
@@ -107,7 +108,7 @@ resource app 'Microsoft.App/containerApps@2024-03-01' = {
     template: {
       containers: [
         {
-          name: 'drasi-server-test'
+          name: 'drasi-server'
           image: containerImage
           resources: {
             cpu: json('0.5')
@@ -116,11 +117,14 @@ resource app 'Microsoft.App/containerApps@2024-03-01' = {
           env: [
             { name: 'RUST_LOG', value: 'info' }
           ]
-          args: ['--config', '/config/server.yaml']
+          // ACA secrets volumes are read-only, but Drasi Server enters read-only
+          // mode (blocking API mutations) when the config file is not writable.
+          // Copy to a writable path so the REST API can modify config at runtime.
+          command: ['/bin/sh', '-c', 'cp /config-secret/server.yaml /app/config/server.yaml && drasi-server --config /app/config/server.yaml']
           volumeMounts: [
             {
               volumeName: 'config-volume'
-              mountPath: '/config'
+              mountPath: '/config-secret'
             }
           ]
           probes: [
@@ -160,3 +164,4 @@ resource app 'Microsoft.App/containerApps@2024-03-01' = {
 }
 
 output url string = 'https://${app.properties.configuration.ingress.fqdn}'
+output docsUrl string = 'https://${app.properties.configuration.ingress.fqdn}/api/v1/docs/'

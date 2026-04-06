@@ -20,6 +20,11 @@ port: 8080
 logLevel: info
 persistConfig: false
 persistIndex: false
+autoInstallPlugins: true
+pluginRegistry: ghcr.io/drasi-project
+plugins:
+- ref: source/mock
+- ref: reaction/log
 sources:
 - kind: mock
   id: mock-source

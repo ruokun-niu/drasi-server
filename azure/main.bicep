@@ -8,7 +8,7 @@
 targetScope = 'resourceGroup'
 
 param location string = resourceGroup().location
-param containerImage string = 'ghcr.io/drasi-project/drasi-server:latest'
+param containerImage string = 'ghcr.io/ruokun-niu/drasi-server:0.1.12'
 param appName string = 'drasi-server'
 param envName string = 'drasi-server-env'
 

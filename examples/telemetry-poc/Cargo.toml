@@ -1,0 +1,37 @@
+[package]
+name = "drasi-server-telemetry-poc"
+version = "0.1.0"
+edition = "2021"
+publish = false
+description = "POC verifying drasi-server's telemetry wiring design (composed tracing subscriber + metrics recorder)"
+
+# Isolated workspace so this doesn't pull the parent drasi-server build graph.
+[workspace]
+
+[dependencies]
+# Tracing facade + subscriber composition (matches drasi-server design deps).
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt", "registry"] }
+
+# OpenTelemetry trace pipeline.
+opentelemetry = "0.20"
+opentelemetry_sdk = { version = "0.20", features = ["rt-tokio"] }
+opentelemetry-stdout = { version = "0.1", features = ["trace"] }
+tracing-opentelemetry = "0.21"
+
+# Metrics facade + Prometheus exporter.
+metrics = "0.24"
+metrics-exporter-prometheus = "0.16"
+metrics-util = "0.20"
+
+# Async + HTTP for verification.
+tokio = { version = "1", features = ["full"] }
+reqwest = { version = "0.12", default-features = false, features = ["rustls-tls"] }
+anyhow = "1"
+serde = { version = "1", features = ["derive"] }
+serde_yaml = "0.9"
+futures = "0.3"
+
+[[bin]]
+name = "drasi-server-telemetry-poc"
+path = "main.rs"

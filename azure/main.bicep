@@ -20,8 +20,12 @@ param serverConfig string = '''
 host: 0.0.0.0
 port: 8080
 logLevel: info
-persistConfig: false
-persistIndex: false
+persistConfig: true
+persistIndex: true
+verifyPlugins: false
+stateStore:
+  kind: redb
+  path: /drasi-persist/state.redb
 autoInstallPlugins: true
 pluginRegistry: ghcr.io/drasi-project
 plugins:
@@ -84,6 +88,54 @@ resource env 'Microsoft.App/managedEnvironments@2024-03-01' = {
 }
 
 // ---------------------------------------------------------------------------
+// Storage Account + File Share for /drasi-persist (durability)
+// ---------------------------------------------------------------------------
+
+var storageAccountName = take(toLower('${replace(appName, '-', '')}sa${uniqueString(resourceGroup().id)}'), 24)
+var fileShareName = 'drasi-persist'
+
+resource storage 'Microsoft.Storage/storageAccounts@2023-05-01' = {
+  name: storageAccountName
+  location: location
+  sku: { name: 'Standard_LRS' }
+  kind: 'StorageV2'
+  properties: {
+    minimumTlsVersion: 'TLS1_2'
+    allowBlobPublicAccess: false
+    allowSharedKeyAccess: true
+  }
+}
+
+resource fileService 'Microsoft.Storage/storageAccounts/fileServices@2023-05-01' = {
+  parent: storage
+  name: 'default'
+}
+
+resource share 'Microsoft.Storage/storageAccounts/fileServices/shares@2023-05-01' = {
+  parent: fileService
+  name: fileShareName
+  properties: {
+    shareQuota: 5
+  }
+}
+
+resource envStorage 'Microsoft.App/managedEnvironments/storages@2024-03-01' = {
+  parent: env
+  name: 'drasi-persist'
+  properties: {
+    azureFile: {
+      accountName: storage.name
+      accountKey: storage.listKeys().keys[0].value
+      shareName: fileShareName
+      accessMode: 'ReadWrite'
+    }
+  }
+  dependsOn: [
+    share
+  ]
+}
+
+// ---------------------------------------------------------------------------
 // Container App
 // ---------------------------------------------------------------------------
 
@@ -117,14 +169,18 @@ resource app 'Microsoft.App/containerApps@2024-03-01' = {
           env: [
             { name: 'RUST_LOG', value: 'info' }
           ]
-          // ACA secrets volumes are read-only, but Drasi Server enters read-only
-          // mode (blocking API mutations) when the config file is not writable.
-          // Copy to a writable path so the REST API can modify config at runtime.
-          command: ['/bin/sh', '-c', 'cp /config-secret/server.yaml /app/config/server.yaml && drasi-server --config /app/config/server.yaml']
+          // Seed /drasi-persist/server.yaml from the secret on first boot, then
+          // run Drasi against the persisted copy so API mutations and redb state
+          // survive revision restarts via the Azure Files-backed volume.
+          command: ['/bin/sh', '-c', 'if [ ! -f /drasi-persist/server.yaml ]; then cp /config-secret/server.yaml /drasi-persist/server.yaml; fi && mkdir -p /drasi-persist/plugins && exec drasi-server --config /drasi-persist/server.yaml --plugins-dir /drasi-persist/plugins']
           volumeMounts: [
             {
               volumeName: 'config-volume'
               mountPath: '/config-secret'
+            }
+            {
+              volumeName: 'drasi-persist'
+              mountPath: '/drasi-persist'
             }
           ]
           probes: [
@@ -153,6 +209,11 @@ resource app 'Microsoft.App/containerApps@2024-03-01' = {
               path: 'server.yaml'
             }
           ]
+        }
+        {
+          name: 'drasi-persist'
+          storageType: 'AzureFile'
+          storageName: envStorage.name
         }
       ]
       scale: {

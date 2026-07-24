@@ -162,3 +162,19 @@ large_enum_variant = "allow"
 # drasi-state-store-redb = { path = "../drasi-core/components/state_stores/redb" }
 # drasi-plugin-sdk = { path = "../drasi-core/components/plugin-sdk" }
 # drasi-host-sdk = { path = "../drasi-core/components/host-sdk" }
+
+# E2E branch testing: pull the drasi-core / drasi-lib family from a branch of
+# drasi-core instead of crates.io. Features declared above still apply; only the
+# source is redirected. The versions on the referenced branch must stay
+# semver-compatible with the versions declared in [dependencies] above.
+[patch.crates-io]
+drasi-core = { git = "https://github.com/ruokun-niu/drasi-core", branch = "main" }
+drasi-lib = { git = "https://github.com/ruokun-niu/drasi-core", branch = "main" }
+drasi-bootstrap-noop = { git = "https://github.com/ruokun-niu/drasi-core", branch = "main" }
+drasi-bootstrap-application = { git = "https://github.com/ruokun-niu/drasi-core", branch = "main" }
+drasi-reaction-application = { git = "https://github.com/ruokun-niu/drasi-core", branch = "main" }
+drasi-index-rocksdb = { git = "https://github.com/ruokun-niu/drasi-core", branch = "main" }
+drasi-state-store-redb = { git = "https://github.com/ruokun-niu/drasi-core", branch = "main" }
+drasi-wal-redb = { git = "https://github.com/ruokun-niu/drasi-core", branch = "main" }
+drasi-plugin-sdk = { git = "https://github.com/ruokun-niu/drasi-core", branch = "main" }
+drasi-host-sdk = { git = "https://github.com/ruokun-niu/drasi-core", branch = "main" }

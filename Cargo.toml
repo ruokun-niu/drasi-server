@@ -162,3 +162,22 @@ large_enum_variant = "allow"
 # drasi-state-store-redb = { path = "../drasi-core/components/state_stores/redb" }
 # drasi-plugin-sdk = { path = "../drasi-core/components/plugin-sdk" }
 # drasi-host-sdk = { path = "../drasi-core/components/host-sdk" }
+
+# Branch testing: build against the drasi-core rocksdb-throughput branch so the
+# RocksDB / redb-WAL throughput changes are compiled into this server. Every
+# drasi-core-origin crate that this server depends on directly must be patched
+# to the SAME git source, otherwise the direct drasi-core (crates.io) and the
+# drasi-core pulled in transitively via drasi-lib would be two different crate
+# instances and fail to type-check. cargo resolves each package by name within
+# the git repo, so no per-crate path is needed.
+[patch.crates-io]
+drasi-core = { git = "https://github.com/ruokun-niu/drasi-core", branch = "rocksdb-throughput" }
+drasi-lib = { git = "https://github.com/ruokun-niu/drasi-core", branch = "rocksdb-throughput" }
+drasi-bootstrap-noop = { git = "https://github.com/ruokun-niu/drasi-core", branch = "rocksdb-throughput" }
+drasi-bootstrap-application = { git = "https://github.com/ruokun-niu/drasi-core", branch = "rocksdb-throughput" }
+drasi-reaction-application = { git = "https://github.com/ruokun-niu/drasi-core", branch = "rocksdb-throughput" }
+drasi-index-rocksdb = { git = "https://github.com/ruokun-niu/drasi-core", branch = "rocksdb-throughput" }
+drasi-state-store-redb = { git = "https://github.com/ruokun-niu/drasi-core", branch = "rocksdb-throughput" }
+drasi-wal-redb = { git = "https://github.com/ruokun-niu/drasi-core", branch = "rocksdb-throughput" }
+drasi-plugin-sdk = { git = "https://github.com/ruokun-niu/drasi-core", branch = "rocksdb-throughput" }
+drasi-host-sdk = { git = "https://github.com/ruokun-niu/drasi-core", branch = "rocksdb-throughput" }

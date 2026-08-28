@@ -150,15 +150,15 @@ type_complexity = "allow"
 large_enum_variant = "allow"
 
 
-# Local development: use path-based dependencies
-# [patch.crates-io]
-# drasi-core = { path = "../drasi-core/core" }
-# drasi-lib = { path = "../drasi-core/lib" }
-# drasi-bootstrap-noop = { path = "../drasi-core/components/bootstrappers/noop" }
-# drasi-bootstrap-application = { path = "../drasi-core/components/bootstrappers/application" }
-# drasi-reaction-application = { path = "../drasi-core/components/reactions/application" }
-# drasi-index-rocksdb = { path = "../drasi-core/components/indexes/rocksdb" }
-# drasi-index-garnet = { path = "../drasi-core/components/indexes/garnet" }
-# drasi-state-store-redb = { path = "../drasi-core/components/state_stores/redb" }
-# drasi-plugin-sdk = { path = "../drasi-core/components/plugin-sdk" }
-# drasi-host-sdk = { path = "../drasi-core/components/host-sdk" }
+# Use the adaptive HTTP fixes from the drasi-core fork.
+[patch.crates-io]
+drasi-core = { git = "https://github.com/ruokun-niu/drasi-core.git", branch = "http-adaptive-fix" }
+drasi-lib = { git = "https://github.com/ruokun-niu/drasi-core.git", branch = "http-adaptive-fix" }
+drasi-bootstrap-noop = { git = "https://github.com/ruokun-niu/drasi-core.git", branch = "http-adaptive-fix" }
+drasi-bootstrap-application = { git = "https://github.com/ruokun-niu/drasi-core.git", branch = "http-adaptive-fix" }
+drasi-reaction-application = { git = "https://github.com/ruokun-niu/drasi-core.git", branch = "http-adaptive-fix" }
+drasi-index-rocksdb = { git = "https://github.com/ruokun-niu/drasi-core.git", branch = "http-adaptive-fix" }
+drasi-state-store-redb = { git = "https://github.com/ruokun-niu/drasi-core.git", branch = "http-adaptive-fix" }
+drasi-wal-redb = { git = "https://github.com/ruokun-niu/drasi-core.git", branch = "http-adaptive-fix" }
+drasi-plugin-sdk = { git = "https://github.com/ruokun-niu/drasi-core.git", branch = "http-adaptive-fix" }
+drasi-host-sdk = { git = "https://github.com/ruokun-niu/drasi-core.git", branch = "http-adaptive-fix" }

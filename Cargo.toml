@@ -152,13 +152,13 @@ large_enum_variant = "allow"
 
 # Use the adaptive HTTP fixes from the drasi-core fork.
 [patch.crates-io]
-drasi-core = { git = "https://github.com/ruokun-niu/drasi-core.git", branch = "http-adaptive-fix" }
-drasi-lib = { git = "https://github.com/ruokun-niu/drasi-core.git", branch = "http-adaptive-fix" }
-drasi-bootstrap-noop = { git = "https://github.com/ruokun-niu/drasi-core.git", branch = "http-adaptive-fix" }
-drasi-bootstrap-application = { git = "https://github.com/ruokun-niu/drasi-core.git", branch = "http-adaptive-fix" }
-drasi-reaction-application = { git = "https://github.com/ruokun-niu/drasi-core.git", branch = "http-adaptive-fix" }
-drasi-index-rocksdb = { git = "https://github.com/ruokun-niu/drasi-core.git", branch = "http-adaptive-fix" }
-drasi-state-store-redb = { git = "https://github.com/ruokun-niu/drasi-core.git", branch = "http-adaptive-fix" }
-drasi-wal-redb = { git = "https://github.com/ruokun-niu/drasi-core.git", branch = "http-adaptive-fix" }
-drasi-plugin-sdk = { git = "https://github.com/ruokun-niu/drasi-core.git", branch = "http-adaptive-fix" }
-drasi-host-sdk = { git = "https://github.com/ruokun-niu/drasi-core.git", branch = "http-adaptive-fix" }
+drasi-core = { git = "https://github.com/ruokun-niu/drasi-core.git", branch = "dispatch-event-migration" }
+drasi-lib = { git = "https://github.com/ruokun-niu/drasi-core.git", branch = "dispatch-event-migration" }
+drasi-bootstrap-noop = { git = "https://github.com/ruokun-niu/drasi-core.git", branch = "dispatch-event-migration" }
+drasi-bootstrap-application = { git = "https://github.com/ruokun-niu/drasi-core.git", branch = "dispatch-event-migration" }
+drasi-reaction-application = { git = "https://github.com/ruokun-niu/drasi-core.git", branch = "dispatch-event-migration" }
+drasi-index-rocksdb = { git = "https://github.com/ruokun-niu/drasi-core.git", branch = "dispatch-event-migration" }
+drasi-state-store-redb = { git = "https://github.com/ruokun-niu/drasi-core.git", branch = "dispatch-event-migration" }
+drasi-wal-redb = { git = "https://github.com/ruokun-niu/drasi-core.git", branch = "dispatch-event-migration" }
+drasi-plugin-sdk = { git = "https://github.com/ruokun-niu/drasi-core.git", branch = "dispatch-event-migration" }
+drasi-host-sdk = { git = "https://github.com/ruokun-niu/drasi-core.git", branch = "dispatch-event-migration" }

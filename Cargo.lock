@@ -1074,7 +1074,7 @@ checksum = "1435fa1053d8b2fbbe9be7e97eca7f33d37b28409959813daefc1446a14247f1"
 [[package]]
 name = "drasi-bootstrap-application"
 version = "0.2.14"
-source = "git+https://github.com/ruokun-niu/drasi-core.git?branch=sequence-as-composite-key#f1d82f7b37a38516841fce11b9e7a60936c6ac5c"
+source = "git+https://github.com/ruokun-niu/drasi-core.git?branch=sequence-as-composite-key#21cef64692ed7106e760ac318ad06f606fd8c068"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -1099,7 +1099,7 @@ dependencies = [
 [[package]]
 name = "drasi-bootstrap-noop"
 version = "0.2.14"
-source = "git+https://github.com/ruokun-niu/drasi-core.git?branch=sequence-as-composite-key#f1d82f7b37a38516841fce11b9e7a60936c6ac5c"
+source = "git+https://github.com/ruokun-niu/drasi-core.git?branch=sequence-as-composite-key#21cef64692ed7106e760ac318ad06f606fd8c068"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -1124,7 +1124,7 @@ dependencies = [
 [[package]]
 name = "drasi-core"
 version = "0.5.9"
-source = "git+https://github.com/ruokun-niu/drasi-core.git?branch=sequence-as-composite-key#f1d82f7b37a38516841fce11b9e7a60936c6ac5c"
+source = "git+https://github.com/ruokun-niu/drasi-core.git?branch=sequence-as-composite-key#21cef64692ed7106e760ac318ad06f606fd8c068"
 dependencies = [
  "approx",
  "async-recursion",
@@ -1165,12 +1165,12 @@ dependencies = [
 [[package]]
 name = "drasi-ffi-primitives"
 version = "0.11.2"
-source = "git+https://github.com/ruokun-niu/drasi-core.git?branch=sequence-as-composite-key#f1d82f7b37a38516841fce11b9e7a60936c6ac5c"
+source = "git+https://github.com/ruokun-niu/drasi-core.git?branch=sequence-as-composite-key#21cef64692ed7106e760ac318ad06f606fd8c068"
 
 [[package]]
 name = "drasi-functions-cypher"
 version = "0.5.9"
-source = "git+https://github.com/ruokun-niu/drasi-core.git?branch=sequence-as-composite-key#f1d82f7b37a38516841fce11b9e7a60936c6ac5c"
+source = "git+https://github.com/ruokun-niu/drasi-core.git?branch=sequence-as-composite-key#21cef64692ed7106e760ac318ad06f606fd8c068"
 dependencies = [
  "drasi-core",
 ]
@@ -1178,7 +1178,7 @@ dependencies = [
 [[package]]
 name = "drasi-functions-gql"
 version = "0.5.9"
-source = "git+https://github.com/ruokun-niu/drasi-core.git?branch=sequence-as-composite-key#f1d82f7b37a38516841fce11b9e7a60936c6ac5c"
+source = "git+https://github.com/ruokun-niu/drasi-core.git?branch=sequence-as-composite-key#21cef64692ed7106e760ac318ad06f606fd8c068"
 dependencies = [
  "drasi-core",
 ]
@@ -1186,7 +1186,7 @@ dependencies = [
 [[package]]
 name = "drasi-host-sdk"
 version = "0.11.2"
-source = "git+https://github.com/ruokun-niu/drasi-core.git?branch=sequence-as-composite-key#f1d82f7b37a38516841fce11b9e7a60936c6ac5c"
+source = "git+https://github.com/ruokun-niu/drasi-core.git?branch=sequence-as-composite-key#21cef64692ed7106e760ac318ad06f606fd8c068"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -1222,7 +1222,7 @@ dependencies = [
 [[package]]
 name = "drasi-index-rocksdb"
 version = "0.6.3"
-source = "git+https://github.com/ruokun-niu/drasi-core.git?branch=sequence-as-composite-key#f1d82f7b37a38516841fce11b9e7a60936c6ac5c"
+source = "git+https://github.com/ruokun-niu/drasi-core.git?branch=sequence-as-composite-key#21cef64692ed7106e760ac318ad06f606fd8c068"
 dependencies = [
  "async-stream",
  "async-trait",
@@ -1248,7 +1248,7 @@ dependencies = [
 [[package]]
 name = "drasi-lib"
 version = "0.9.2"
-source = "git+https://github.com/ruokun-niu/drasi-core.git?branch=sequence-as-composite-key#f1d82f7b37a38516841fce11b9e7a60936c6ac5c"
+source = "git+https://github.com/ruokun-niu/drasi-core.git?branch=sequence-as-composite-key#21cef64692ed7106e760ac318ad06f606fd8c068"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -1285,7 +1285,7 @@ dependencies = [
 [[package]]
 name = "drasi-middleware"
 version = "0.5.10"
-source = "git+https://github.com/ruokun-niu/drasi-core.git?branch=sequence-as-composite-key#f1d82f7b37a38516841fce11b9e7a60936c6ac5c"
+source = "git+https://github.com/ruokun-niu/drasi-core.git?branch=sequence-as-composite-key#21cef64692ed7106e760ac318ad06f606fd8c068"
 dependencies = [
  "async-trait",
  "base64",
@@ -1303,7 +1303,7 @@ dependencies = [
 [[package]]
 name = "drasi-plugin-sdk"
 version = "0.11.2"
-source = "git+https://github.com/ruokun-niu/drasi-core.git?branch=sequence-as-composite-key#f1d82f7b37a38516841fce11b9e7a60936c6ac5c"
+source = "git+https://github.com/ruokun-niu/drasi-core.git?branch=sequence-as-composite-key#21cef64692ed7106e760ac318ad06f606fd8c068"
 dependencies = [
  "anyhow",
  "async-stream",
@@ -1329,7 +1329,7 @@ dependencies = [
 [[package]]
 name = "drasi-query-ast"
 version = "0.3.5"
-source = "git+https://github.com/ruokun-niu/drasi-core.git?branch=sequence-as-composite-key#f1d82f7b37a38516841fce11b9e7a60936c6ac5c"
+source = "git+https://github.com/ruokun-niu/drasi-core.git?branch=sequence-as-composite-key#21cef64692ed7106e760ac318ad06f606fd8c068"
 dependencies = [
  "serde",
  "serde_json",
@@ -1339,7 +1339,7 @@ dependencies = [
 [[package]]
 name = "drasi-query-cypher"
 version = "0.3.6"
-source = "git+https://github.com/ruokun-niu/drasi-core.git?branch=sequence-as-composite-key#f1d82f7b37a38516841fce11b9e7a60936c6ac5c"
+source = "git+https://github.com/ruokun-niu/drasi-core.git?branch=sequence-as-composite-key#21cef64692ed7106e760ac318ad06f606fd8c068"
 dependencies = [
  "drasi-query-ast",
  "peg",
@@ -1350,7 +1350,7 @@ dependencies = [
 [[package]]
 name = "drasi-query-gql"
 version = "0.3.6"
-source = "git+https://github.com/ruokun-niu/drasi-core.git?branch=sequence-as-composite-key#f1d82f7b37a38516841fce11b9e7a60936c6ac5c"
+source = "git+https://github.com/ruokun-niu/drasi-core.git?branch=sequence-as-composite-key#21cef64692ed7106e760ac318ad06f606fd8c068"
 dependencies = [
  "drasi-query-ast",
  "peg",
@@ -1361,7 +1361,7 @@ dependencies = [
 [[package]]
 name = "drasi-reaction-application"
 version = "0.3.12"
-source = "git+https://github.com/ruokun-niu/drasi-core.git?branch=sequence-as-composite-key#f1d82f7b37a38516841fce11b9e7a60936c6ac5c"
+source = "git+https://github.com/ruokun-niu/drasi-core.git?branch=sequence-as-composite-key#21cef64692ed7106e760ac318ad06f606fd8c068"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -1450,7 +1450,7 @@ dependencies = [
 [[package]]
 name = "drasi-state-store-redb"
 version = "0.2.7"
-source = "git+https://github.com/ruokun-niu/drasi-core.git?branch=sequence-as-composite-key#f1d82f7b37a38516841fce11b9e7a60936c6ac5c"
+source = "git+https://github.com/ruokun-niu/drasi-core.git?branch=sequence-as-composite-key#21cef64692ed7106e760ac318ad06f606fd8c068"
 dependencies = [
  "async-trait",
  "drasi-lib",
@@ -1463,7 +1463,7 @@ dependencies = [
 [[package]]
 name = "drasi-wal-redb"
 version = "0.2.9"
-source = "git+https://github.com/ruokun-niu/drasi-core.git?branch=sequence-as-composite-key#f1d82f7b37a38516841fce11b9e7a60936c6ac5c"
+source = "git+https://github.com/ruokun-niu/drasi-core.git?branch=sequence-as-composite-key#21cef64692ed7106e760ac318ad06f606fd8c068"
 dependencies = [
  "async-trait",
  "bincode",
@@ -1566,7 +1566,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
 dependencies = [
  "libc",
- "windows-sys 0.59.0",
+ "windows-sys 0.61.2",
 ]
 
 [[package]]
@@ -2937,7 +2937,7 @@ version = "0.50.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7957b9740744892f114936ab4a57b3f487491bbeafaf8083688b16841a4240e5"
 dependencies = [
- "windows-sys 0.59.0",
+ "windows-sys 0.61.2",
 ]
 
 [[package]]
@@ -4394,7 +4394,7 @@ dependencies = [
  "errno",
  "libc",
  "linux-raw-sys",
- "windows-sys 0.59.0",
+ "windows-sys 0.61.2",
 ]
 
 [[package]]
@@ -4453,7 +4453,7 @@ dependencies = [
  "security-framework",
  "security-framework-sys",
  "webpki-root-certs",
- "windows-sys 0.59.0",
+ "windows-sys 0.61.2",
 ]
 
 [[package]]
@@ -4992,7 +4992,7 @@ dependencies = [
  "getrandom 0.4.2",
  "once_cell",
  "rustix",
- "windows-sys 0.59.0",
+ "windows-sys 0.61.2",
 ]
 
 [[package]]
@@ -5916,7 +5916,7 @@ version = "0.1.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c2a7b1c03c876122aa43f3020e6c3c3ee5c05081c9a00739faf7503aeba10d22"
 dependencies = [
- "windows-sys 0.59.0",
+ "windows-sys 0.61.2",
 ]
 
 [[package]]
